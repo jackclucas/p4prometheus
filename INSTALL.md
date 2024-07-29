@@ -70,6 +70,9 @@ Checkout  following files:
 Standalone script just to install the `lslocks` monitoring (normally covered by `install_p4prom.sh` above):
 * [install_lslocks.sh](scripts/install_lslocks.sh) or for use with wget, download raw file: [*right click this link > copy link address*](https://raw.githubusercontent.com/perforce/p4prometheus/master/scripts/install_lslocks.sh) - the installer for lslocks monitoring only (if `install_p4prom.sh` not performed)
 
+Standalone script just to install the `swarm_metrics.sh` script
+* [install_swarm_metrics.sh](https://github.com/jackclucas/p4prometheus/blob/master/scripts/install_swarm_metrics.sh) or for use with wget, download raw file: [*right click this link > copy link address*](https://raw.githubusercontent.com/jackclucas/p4prometheus/master/scripts/install_swarm_metrics.sh) - the installer for Swarm metrics monitoring.
+
 Example of use (as root):
 
     wget https://raw.githubusercontent.com/perforce/p4prometheus/master/scripts/install_p4prom.sh

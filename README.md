@@ -26,6 +26,7 @@ Uses [go-libp4dlog](https://github.com/rcowham/go-libp4dlog) for actual log file
   - [P4Prometheus Metrics](#p4prometheus-metrics)
   - [Monitor\_metrics.sh Metrics](#monitor_metricssh-metrics)
   - [Locks Metrics](#locks-metrics)
+  - [Swarm Metrics](#swarm-metrics)
 
 ## Support Status
 
@@ -182,3 +183,17 @@ Note these metrics will all have these labels: sdpinst (if SDP), serverid. Extra
 | p4_locks_meta_read |  | meta db read locks |
 | p4_locks_meta_write |  | meta db write locks |
 | p4_locks_cmds_blocked |  | cmds blocked by locks |
+
+## Swarm Metrics
+
+The Swarm Metrics script (swarm_metrics.sh) generates metrics specifically for Swarm, providing valuable insights into task queues, worker status, and resource usage.
+
+ This script is available on Linux and requires the `jq` utility to be installed.
+
+| Metric Name             | Description                           |
+| ----------------------- | ------------------------------------- |
+| swarm_tasks             | Number of tasks in the Swarm queue    |
+| swarm_future_tasks      | Number of future tasks in the queue   |
+| swarm_workers           | Number of active Swarm workers        |
+| swarm_max_workers       | Maximum number of Swarm workers       |
+| swarm_worker_lifetime   | Lifetime of Swarm workers in seconds  |
