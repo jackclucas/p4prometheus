@@ -81,13 +81,16 @@ wget=$(which wget)
 
 # Install the swarm_metrics.sh script
 install_swarm_metrics () {
-    script_url="https://github.com/jackclucas/p4prometheus/raw/main/scripts/swarm_metrics.sh"
+    script_url="https://github.com/jackclucas/p4prometheus/raw/master/scripts/swarm_metrics.sh"
     script_path="/etc/metrics/swarm_metrics.sh"
 
-    msg "Downloading and installing swarm_metrics.sh"
-    wget -q -O "$script_path" "$script_url"
+    msg "\nDownloading and installing swarm_metrics.sh from $script_url\n"
+    wget -O "$script_path" "$script_url"
+    if [[ ! -s "$script_path" ]]; then
+        bail "Failed to download swarm_metrics.sh or the file is empty"
+    fi
     chmod +x "$script_path"
-    chown "$OsUser:$OSGROUP" "$script_path"
+    [[ -n "$OsUser" ]] && chown "$OsUser" "$script_path"
 }
 
 # Install the cron job
@@ -96,20 +99,31 @@ install_cron_job () {
     script_path="/etc/metrics/swarm_metrics.sh"
     cron_entry="*/5 * * * * $script_path -c $config_file > /dev/null 2>&1 ||:"
 
-    # Install in crontab if required
-    sudo -u "$OsUser" crontab -l > "$mytab" 2>/dev/null || true
-    if ! grep -q "$script_path" "$mytab" ;then
-        echo "$cron_entry" >> "$mytab"
+    if [[ -n "$OsUser" ]]; then
+        sudo -u "$OsUser" crontab -l > "$mytab" 2>/dev/null || true
+        if ! grep -q "$script_path" "$mytab" ;then
+            echo "$cron_entry" >> "$mytab"
+        fi
+        sudo -u "$OsUser" crontab "$mytab"
+    else
+        crontab -l > "$mytab" 2>/dev/null || true
+        if ! grep -q "$script_path" "$mytab" ;then
+            echo "$cron_entry" >> "$mytab"
+        fi
+        crontab "$mytab"
     fi
-    sudo -u "$OsUser" crontab "$mytab"
 
     # List things out for review
-    echo "Crontab after updating - showing swarm_metrics entries:"
-    sudo -u "$OsUser" crontab -l | grep "$script_path"
+    msg "\nCrontab after updating - showing swarm_metrics entries:\n"
+    if [[ -n "$OsUser" ]]; then
+        sudo -u "$OsUser" crontab -l | grep "$script_path"
+    else
+        crontab -l | grep "$script_path"
+    fi
 }
 
 install_swarm_metrics
 install_cron_job
 
-msg "Installation complete. Check crontab -l output above (as user $OsUser) to ensure the entry is present."
+msg "\nInstallation complete. Check crontab -l output above (as user ${OsUser:-root}) to ensure the entry is present.\n"
 
